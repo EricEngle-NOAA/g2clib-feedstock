@@ -9,7 +9,7 @@ source:
   url: https://github.com/NOAA-EMC/NCEPLIBS-g2c/archive/refs/tags/v{{ version }}.tar.gz
   sha256: 8520a24c066500cfd0d07a05c6b7b0cb92383d1a4737cf6e79d9f4919c8e79ab
   patches:
-     - 0001-msvc-no-vla-g2ccsv.patch  # [win]
+     - 0002-msvc-no-vla-g2ccsv.patch  # [win]
 #    - 0001-Trying-this-simple-change.patch
 
 build:
