@@ -1,19 +1,27 @@
 @echo on
 setlocal EnableDelayedExpansion
 
-REM Ensure pkg-config (pkgconf) can find conda .pc files
+REM Host prefix (dependencies) is PREFIX/LIBRARY_PREFIX.
+REM Build prefix (tools like pkg-config) is BUILD_PREFIX.
+
+REM Where pkg-config should look for .pc files (from HOST env)
 set "PKG_CONFIG_PATH=%LIBRARY_PREFIX%\lib\pkgconfig;%LIBRARY_PREFIX%\share\pkgconfig"
 
-REM Force CMake's FindPkgConfig to use the conda-provided pkg-config
-set "PKG_CONFIG_EXECUTABLE=%LIBRARY_BIN%\pkg-config.exe"
+REM pkg-config executable comes from BUILD env (pkgconf is a build dependency)
+set "PKG_CONFIG_EXECUTABLE=%BUILD_PREFIX%\Library\bin\pkg-config.exe"
 
-REM Helpful diagnostics in CI logs
-where pkg-config
-pkg-config --version
-
-mkdir build
+REM Diagnostics
+echo PKG_CONFIG_PATH=%PKG_CONFIG_PATH%
+echo PKG_CONFIG_EXECUTABLE=%PKG_CONFIG_EXECUTABLE%
+if not exist "%PKG_CONFIG_EXECUTABLE%" (
+  echo ERROR: pkg-config.exe not found at "%PKG_CONFIG_EXECUTABLE%"
+  dir "%BUILD_PREFIX%\Library\bin"
+  exit 1
+)
+"%PKG_CONFIG_EXECUTABLE%" --version
 if errorlevel 1 exit 1
 
+REM Configure
 cmake -S "%SRC_DIR%" -B build -G "Ninja" ^
       %CMAKE_ARGS% ^
       -DCMAKE_BUILD_TYPE=Release ^
@@ -34,10 +42,10 @@ cmake -S "%SRC_DIR%" -B build -G "Ninja" ^
       -DCMAKE_WINDOWS_EXPORT_ALL_SYMBOLS=ON
 if errorlevel 1 exit 1
 
-REM Build step
+REM Build
 cmake --build build --config Release --parallel
 if errorlevel 1 exit 1
 
-REM Install step
+REM Install
 cmake --install build --config Release
 if errorlevel 1 exit 1
