@@ -1,23 +1,27 @@
 @echo on
 setlocal EnableDelayedExpansion
 
-REM Host prefix (dependencies) is PREFIX/LIBRARY_PREFIX.
-REM Build prefix (tools like pkg-config) is BUILD_PREFIX.
-
 REM Where pkg-config should look for .pc files (from HOST env)
 set "PKG_CONFIG_PATH=%LIBRARY_PREFIX%\lib\pkgconfig;%LIBRARY_PREFIX%\share\pkgconfig"
 
-REM pkg-config executable comes from BUILD env (pkgconf is a build dependency)
-set "PKG_CONFIG_EXECUTABLE=%BUILD_PREFIX%\Library\bin\pkg-config.exe"
+REM pkg-config executable comes from BUILD env; pkgconf provides pkgconf.exe on win-64
+set "PKG_CONFIG_EXECUTABLE=%BUILD_PREFIX%\Library\bin\pkgconf.exe"
+
+REM Fallback: sometimes packages also ship pkg-config.exe
+if not exist "%PKG_CONFIG_EXECUTABLE%" (
+  set "PKG_CONFIG_EXECUTABLE=%BUILD_PREFIX%\Library\bin\pkg-config.exe"
+)
 
 REM Diagnostics
 echo PKG_CONFIG_PATH=%PKG_CONFIG_PATH%
 echo PKG_CONFIG_EXECUTABLE=%PKG_CONFIG_EXECUTABLE%
 if not exist "%PKG_CONFIG_EXECUTABLE%" (
-  echo ERROR: pkg-config.exe not found at "%PKG_CONFIG_EXECUTABLE%"
+  echo ERROR: No pkg-config compatible executable found.
+  echo Contents of %BUILD_PREFIX%\Library\bin:
   dir "%BUILD_PREFIX%\Library\bin"
   exit 1
 )
+
 "%PKG_CONFIG_EXECUTABLE%" --version
 if errorlevel 1 exit 1
 
