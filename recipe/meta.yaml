@@ -12,8 +12,8 @@ source:
 #    - 0001-Trying-this-simple-change.patch
 
 build:
-  skip: true  # [win]
-  number: 0
+#  skip: true  # [win]
+  number: 1
 
 outputs:
   - name: {{ name }}
@@ -27,7 +27,7 @@ outputs:
         - {{ compiler('c') }}
         - {{ stdlib('c') }}     # [not win]
         - cmake >=3.15
-        - pkg-config >=0.21
+        - pkg-config >=0.21     # [not win]
         - make                  # [not win]
         - ninja                 # [win]
       host:
@@ -43,6 +43,7 @@ outputs:
       commands:
         - test -f ${PREFIX}/lib/libg2c${SHLIB_EXT}  # [not win]
         - test ! -f ${PREFIX}/lib/libg2c.a  # [not win]
+        - if not exist %LIBRARY_BIN%\\g2c.lib exit 1  # [win]
         - if not exist %LIBRARY_BIN%\\g2c.dll exit 1  # [win]
 
   # old name for the package
