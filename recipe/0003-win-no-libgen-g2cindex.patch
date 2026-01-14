@@ -1,0 +1,28 @@
+--- a/src/g2cindex.c
++++ b/src/g2cindex.c
+@@ -5,10 +5,28 @@
+  *
+  * @author Ed Hartnett @date 10/12/22
+  */
+ #include "grib2_int.h"
+-#include <libgen.h>
++#ifdef _WIN32
++#include <string.h>
++/* MSVC has no <libgen.h>. Provide basename() equivalent. */
++static const char *g2c_basename_const(const char *path)
++{
++    const char *p;
++    if (!path || !*path)
++        return path;
++    /* Handle both Windows and Unix separators. */
++    p = strrchr(path, '\\');
++    if (!p)
++        p = strrchr(path, '/');
++    return p ? (p + 1) : path;
++}
++#define basename(p) ((char *)g2c_basename_const((p)))
++#else
++#include <libgen.h>
++#endif
+ #include <stdarg.h>
+ #include <time.h>
