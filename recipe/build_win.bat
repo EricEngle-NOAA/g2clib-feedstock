@@ -38,6 +38,7 @@ cmake -S "%SRC_DIR%" -B build -G "Ninja" ^
       -DCMAKE_FIND_FRAMEWORK=NEVER ^
       -DCMAKE_FIND_APPBUNDLE=NEVER ^
       -DPKG_CONFIG_EXECUTABLE="%PKG_CONFIG_EXECUTABLE%" ^
+      -DUTILS=OFF ^
       -DUSE_Jasper=ON ^
       -DUSE_OpenJPEG=OFF ^
       -DUSE_PNG=ON ^

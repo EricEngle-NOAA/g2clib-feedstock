@@ -1,6 +1,8 @@
+diff --git a/src/g2ccsv.c b/src/g2ccsv.c
+index 54f7415..684676c 100644
 --- a/src/g2ccsv.c
 +++ b/src/g2ccsv.c
-@@ -175,7 +175,7 @@
+@@ -214,7 +214,7 @@ g2c_csv_strsep(char **stringp, const char *delim)
  int
  g2c_csv_init()
  {
