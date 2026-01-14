@@ -19,8 +19,7 @@ outputs:
     build:
       run_exports:
         - {{ pin_subpackage('nceplibs-g2c', max_pin='x.x.x') }}
-    script: build_linux.sh  # [not win]
-    script: build_win.bat   # [win]
+    script: {{ "build_win.bat" if win else "build_linux.sh" }}
     requirements:
       build:
         - {{ compiler('c') }}
@@ -38,7 +37,6 @@ outputs:
         - libaec >=1.0.6
         - openjpeg              # [not win]
         - jasper                # [win]
-
     test:
       commands:
         - test -f ${PREFIX}/lib/libg2c${SHLIB_EXT}  # [not win]
@@ -71,4 +69,3 @@ extra:
     - xylar
     - TimothyCera-NOAA
     - EricEngle-NOAA
-
